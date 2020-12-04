@@ -1,6 +1,7 @@
 import React from "react";
 
-import { money, useCheckout } from "./Checkout";
+import { useCheckout } from "./Checkout";
+import { money } from "./money";
 
 type Props = {
   ItemComponent: React.ElementType<any>;

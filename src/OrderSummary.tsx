@@ -2,7 +2,7 @@ import React from "react";
 
 import Address from "./Address";
 import type { Address as AddressType, Item } from "./Checkout";
-import { money } from "./Checkout";
+import { money } from "./money";
 
 type Props = {
   email: string;

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 
-import { money, useCheckout } from "./Checkout";
+import { useCheckout } from "./Checkout";
 import type { Address } from "./Checkout";
 import { legendStyles, radioLabelStyles } from "./constants";
+import { money } from "./money";
 
 /* eslint-disable camelcase */
 

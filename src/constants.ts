@@ -72,3 +72,9 @@ export const US_STATES = {
   WI: "Wisconsin",
   WY: "Wyoming",
 };
+
+export const steps = {
+  1: "Customer Information",
+  2: "Shipping Method",
+  3: "Payment Method",
+};

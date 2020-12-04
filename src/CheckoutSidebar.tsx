@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 
-import { money, useCheckout, useTotal } from "./Checkout";
+import { useCheckout } from "./Checkout";
 import { inputStyles } from "./constants";
+import { money } from "./money";
 
 /* eslint-disable camelcase */
 
@@ -40,7 +41,7 @@ const CheckoutSidebar = ({ ItemComponent }: Props) => {
           <ItemComponent key={item.id} item={item} />
         ))}
       </div>
-      {/* {!discount_code && !complete && (
+      {!discount_code && !complete && (
         <>
           <div className="flex items-center justify-center">
             <input
@@ -64,7 +65,7 @@ const CheckoutSidebar = ({ ItemComponent }: Props) => {
             </button>
           </div>
         </>
-      )} */}
+      )}
       <div className="flex text-sm text-gray-600 mt-3">
         <span>Subtotal:</span>
         <span className="ml-auto">{money(subtotal)}</span>
