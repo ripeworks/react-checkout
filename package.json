@@ -1,6 +1,8 @@
 {
   "name": "@ripeworks/checkout",
-  "version": "0.0.2",
+  "version": "0.0.3",
+  "main": "./dist/index.js",
+  "typings": "./dist/index.d.ts",
   "scripts": {
     "prepublish": "npm run clean && npm run build",
     "clean": "rm -rf dist/* && mkdir -p dist",
