@@ -21,9 +21,9 @@ const AddressForm = ({ includeName = false, stateKey }: Props) => {
     state = "",
     zip = "",
     country = "",
-  } = data[stateKey];
+  } = data[stateKey] || {};
 
-  const onChange = (field: string) => (e) => {
+  const onChange = (field: string) => (e: any) => {
     updateCheckout({
       [stateKey]: {
         ...data[stateKey],
