@@ -13,7 +13,7 @@ const requiredFields = [
   "last_name",
   "phone",
   "ship_method",
-];
+] as const;
 
 export const useSubmitOrder = (
   orderHandler: (order: OrderRequestPayload) => Promise<void>
@@ -23,9 +23,10 @@ export const useSubmitOrder = (
   const stripe = useStripe();
   const elements = useElements();
   const [submitting, setSubmitting] = useState(false);
-  const [orderError, setOrderError] = useState(null);
+  const [orderError, setOrderError] = useState<Error | null>(null);
 
   const submitOrder = useCallback(async () => {
+    if (!stripe) return;
     setSubmitting(true);
     setOrderError(null);
     try {
@@ -35,7 +36,12 @@ export const useSubmitOrder = (
         );
       }
       const address = data.bill_address || data.ship_address;
-      const cardElement = elements.getElement(CardNumberElement);
+      if (!address) {
+        throw new Error(
+          "Missing address. Please complete all fields and try again."
+        );
+      }
+      const cardElement = elements?.getElement(CardNumberElement);
       let paymentToken = "";
 
       const orderPayload = {
@@ -85,7 +91,7 @@ export const useSubmitOrder = (
         if (error?.message) {
           throw new Error(error.message);
         }
-        paymentToken = paymentIntent.id;
+        paymentToken = paymentIntent?.id ?? "";
       } else {
         const { paymentIntent, error } = await stripe.confirmCardPayment(
           secret
@@ -93,7 +99,7 @@ export const useSubmitOrder = (
         if (error?.message) {
           throw new Error(error.message);
         }
-        paymentToken = paymentIntent.id;
+        paymentToken = paymentIntent?.id ?? "";
       }
 
       await orderHandler({
@@ -102,7 +108,7 @@ export const useSubmitOrder = (
       });
     } catch (err) {
       console.log(err); //eslint-disable-line no-console
-      setOrderError(err);
+      setOrderError(err as Error);
     }
     setSubmitting(false);
   }, [

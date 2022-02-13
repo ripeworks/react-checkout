@@ -24,6 +24,12 @@ type Props = {
   steps?: boolean;
 };
 
+type ShippingMethod = {
+  id: string;
+  name: string;
+  price: number;
+};
+
 const ShippingForm = ({ hidePrice = false, steps = false }: Props) => {
   const {
     data: { email, ship_address, ship_method },
@@ -32,7 +38,9 @@ const ShippingForm = ({ hidePrice = false, steps = false }: Props) => {
     updateCheckout,
   } = useCheckout();
 
-  const [shippingMethodsWithPrice, setShippingMethods] = useState([]);
+  const [shippingMethodsWithPrice, setShippingMethods] = useState<
+    ShippingMethod[]
+  >([]);
 
   useEffect(() => {
     Promise.all(
@@ -63,7 +71,7 @@ const ShippingForm = ({ hidePrice = false, steps = false }: Props) => {
           </div>
           <div className="checkout-panel--option">
             <span className="checkout-panel--label">Ship to</span>
-            <span>{addressToString(ship_address)}</span>
+            <span>{ship_address ? addressToString(ship_address) : ""}</span>
             <a onClick={() => updateCheckout({ step: 1 })}>Change</a>
           </div>
         </div>

@@ -1,5 +1,5 @@
 import { Elements } from "@stripe/react-stripe-js";
-import { loadStripe } from "@stripe/stripe-js";
+import { Stripe, loadStripe } from "@stripe/stripe-js";
 import storage from "local-storage-fallback";
 import React, {
   createContext,
@@ -75,10 +75,10 @@ type CheckoutContextType = {
   tax: number;
   shippingMethods: ShippingMethod[];
   styles: Record<StyleNames, string>;
-  applyDiscount?: (discount: string) => Error | void;
-  clearCart?: () => void;
-  updateCheckout?: (nextState: Partial<CheckoutStateType>) => void;
-  updateCart?: (item: Item) => void;
+  applyDiscount: (discount: string) => Error | void;
+  clearCart: () => void;
+  updateCheckout: (nextState: Partial<CheckoutStateType>) => void;
+  updateCart: (item: Item) => void;
 };
 
 export type OrderRequestPayload = CheckoutStateType & {
@@ -103,7 +103,7 @@ const initialState: CheckoutStateType = {
   },
   bill_address_method: "same",
   email: "",
-  discount_code: null,
+  discount_code: undefined,
   items: [],
   ship_address: {
     first_name: "",
@@ -135,11 +135,15 @@ const initialContext: CheckoutContextType = {
   },
   subtotal: 0,
   tax: 0,
+  applyDiscount: () => {},
+  clearCart: () => {},
+  updateCheckout: () => {},
+  updateCart: () => {},
 };
 
 const CheckoutContext = createContext<CheckoutContextType>(initialContext);
 
-let stripePromise;
+let stripePromise: Promise<Stripe | null>;
 
 type Props = {
   children: React.ReactNode;
@@ -159,7 +163,7 @@ export const CheckoutProvider = ({
   stripeAccount = undefined,
 }: Props) => {
   if (!stripePromise) {
-    stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_KEY, {
+    stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_KEY ?? "", {
       stripeAccount,
     });
   }
@@ -180,7 +184,7 @@ export const CheckoutProvider = ({
 
   useEffect(() => {
     try {
-      const hydratedState = JSON.parse(storage.getItem(storageKey));
+      const hydratedState = JSON.parse(storage.getItem(storageKey) ?? "");
       if (hydratedState) {
         setCheckoutState(hydratedState);
       }

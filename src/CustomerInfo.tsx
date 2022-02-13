@@ -21,6 +21,8 @@ const CustomerInfo = () => {
     () => shippingMethods.find((method) => method.id === ship_method),
     [shippingMethods, ship_method]
   );
+  const billAddress =
+    bill_address_method === "same" ? ship_address : bill_address;
 
   return (
     <div>
@@ -31,7 +33,7 @@ const CustomerInfo = () => {
             <h4>Contact Information</h4>
             {email}
             <h4>Shipping Address</h4>
-            <Address address={ship_address} />
+            {!!ship_address && <Address address={ship_address} />}
 
             {!!shipMethod && (
               <>
@@ -42,11 +44,7 @@ const CustomerInfo = () => {
           </div>
           <div>
             <h4>Billing Address</h4>
-            <Address
-              address={
-                bill_address_method === "same" ? ship_address : bill_address
-              }
-            />
+            {!!billAddress && <Address address={billAddress} />}
           </div>
         </div>
       </fieldset>
