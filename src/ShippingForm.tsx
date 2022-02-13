@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 
 import { useCheckout } from "./Checkout";
 import type { Address } from "./Checkout";
-import { legendStyles, radioLabelStyles } from "./constants";
 import { money } from "./money";
 
 /* eslint-disable camelcase */
@@ -21,12 +20,14 @@ const addressToString = ({
 };
 
 type Props = {
+  hidePrice?: boolean;
   steps?: boolean;
 };
 
-const ShippingForm = ({ steps = false }: Props) => {
+const ShippingForm = ({ hidePrice = false, steps = false }: Props) => {
   const {
     data: { email, ship_address, ship_method },
+    styles,
     shippingMethods,
     updateCheckout,
   } = useCheckout();
@@ -53,7 +54,7 @@ const ShippingForm = ({ steps = false }: Props) => {
 
   return (
     <div>
-      {steps && (
+      {!!steps && (
         <div className="checkout-panel">
           <div className="checkout-panel--option">
             <span className="checkout-panel--label">Contact</span>
@@ -68,11 +69,11 @@ const ShippingForm = ({ steps = false }: Props) => {
         </div>
       )}
       <fieldset>
-        <legend className={legendStyles}>Shipping Method</legend>
+        <legend className={styles.legend}>Shipping Method</legend>
         <div className="checkout-panel">
           {shippingMethodsWithPrice.map((shipMethod) => (
             <div className="checkout-panel--option" key={shipMethod.id}>
-              <label className={radioLabelStyles}>
+              <label className={styles.radio}>
                 <input
                   type="radio"
                   value={shipMethod.id}
@@ -82,7 +83,7 @@ const ShippingForm = ({ steps = false }: Props) => {
                   }
                 />
                 <span className="mx-1">{shipMethod.name}</span>
-                <span>{money(shipMethod.price)}</span>
+                {!hidePrice && <span>{money(shipMethod.price)}</span>}
               </label>
             </div>
           ))}

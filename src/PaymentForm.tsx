@@ -3,26 +3,26 @@ import React from "react";
 import AddressForm from "./AddressForm";
 import { useCheckout } from "./Checkout";
 import StripePaymentForm from "./StripePaymentForm";
-import { legendStyles, radioLabelStyles } from "./constants";
 
 /* eslint-disable camelcase */
 
 const PaymentForm = () => {
   const {
     data: { bill_address_method },
+    styles,
     updateCheckout,
   } = useCheckout();
 
   return (
     <div>
       <fieldset>
-        <legend className={legendStyles}>Payment Method</legend>
-        <StripePaymentForm />
+        <legend className={styles.legend}>Payment Method</legend>
+        <StripePaymentForm inputStyles={styles.input} />
       </fieldset>
       <fieldset>
-        <legend className={legendStyles}>Billing Address</legend>
+        <legend className={styles.legend}>Billing Address</legend>
         <div>
-          <label className={radioLabelStyles}>
+          <label className={styles.radio}>
             <input
               name="bill_address_method"
               type="radio"
@@ -33,7 +33,7 @@ const PaymentForm = () => {
           </label>
         </div>
         <div>
-          <label className={radioLabelStyles}>
+          <label className={styles.radio}>
             <input
               name="bill_address_method"
               type="radio"

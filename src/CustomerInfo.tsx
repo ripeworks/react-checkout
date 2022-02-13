@@ -33,7 +33,7 @@ const CustomerInfo = () => {
             <h4>Shipping Address</h4>
             <Address address={ship_address} />
 
-            {shipMethod && (
+            {!!shipMethod && (
               <>
                 <h4>Shipping Method</h4>
                 <p>{shipMethod.name}</p>

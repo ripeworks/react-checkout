@@ -13,9 +13,9 @@ type Props = {
   items: Item[];
   ItemComponent: React.ElementType<any>;
   total: string;
+  headingStyles?: string;
 };
 
-const headingStyles = "text-blue-900 pt-4";
 const dataStyles = "text-gray-600";
 
 const OrderSummary = ({
@@ -26,6 +26,7 @@ const OrderSummary = ({
   paymentMethod,
   items,
   ItemComponent,
+  headingStyles = "text-blue-900 my-4",
   total,
 }: Props) => {
   return (

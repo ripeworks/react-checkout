@@ -1,5 +1,5 @@
 import { Elements } from "@stripe/react-stripe-js";
-import { Stripe, loadStripe } from "@stripe/stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
 import storage from "local-storage-fallback";
 import React, {
   createContext,
@@ -10,7 +10,17 @@ import React, {
   useState,
 } from "react";
 
+import {
+  checkboxLabelStyles,
+  inputStyles,
+  legendStyles,
+  radioLabelStyles,
+  selectStyles,
+} from "./constants";
+
 /* eslint-disable camelcase */
+
+export type StyleNames = "legend" | "input" | "select" | "radio" | "checkbox";
 
 export type Item = {
   id: string;
@@ -64,6 +74,7 @@ type CheckoutContextType = {
   subtotal: number;
   tax: number;
   shippingMethods: ShippingMethod[];
+  styles: Record<StyleNames, string>;
   applyDiscount?: (discount: string) => Error | void;
   clearCart?: () => void;
   updateCheckout?: (nextState: Partial<CheckoutStateType>) => void;
@@ -115,19 +126,27 @@ const initialContext: CheckoutContextType = {
   shippingMethods: [],
   discount_price: 0,
   ship_price: 0,
+  styles: {
+    checkbox: checkboxLabelStyles,
+    input: inputStyles,
+    legend: legendStyles,
+    radio: radioLabelStyles,
+    select: selectStyles,
+  },
   subtotal: 0,
   tax: 0,
 };
 
 const CheckoutContext = createContext<CheckoutContextType>(initialContext);
 
-let stripePromise: Promise<Stripe> | null;
+let stripePromise;
 
 type Props = {
   children: React.ReactNode;
   discounts?: Discount[];
   shippingMethods: ShippingMethod[];
   storageKey?: string;
+  styles?: Partial<Record<StyleNames, string>>;
   stripeAccount?: string;
 };
 
@@ -136,6 +155,7 @@ export const CheckoutProvider = ({
   discounts = [],
   shippingMethods = [],
   storageKey = "checkoutState",
+  styles,
   stripeAccount = undefined,
 }: Props) => {
   if (!stripePromise) {
@@ -147,10 +167,23 @@ export const CheckoutProvider = ({
   const [checkoutState, setCheckoutState] = useState(initialState);
   const [orderComplete, setOrderComplete] = useState(false);
 
+  const checkoutStyles = useMemo(
+    () => ({
+      checkbox: styles?.checkbox ?? checkboxLabelStyles,
+      input: styles?.input ?? inputStyles,
+      legend: styles?.legend ?? legendStyles,
+      radio: styles?.radio ?? radioLabelStyles,
+      select: styles?.select ?? selectStyles,
+    }),
+    [styles]
+  );
+
   useEffect(() => {
     try {
       const hydratedState = JSON.parse(storage.getItem(storageKey));
-      setCheckoutState(hydratedState);
+      if (hydratedState) {
+        setCheckoutState(hydratedState);
+      }
     } catch (err) {
       console.error("Failed to load checkout state", err); // eslint-disable-line no-console
     }
@@ -274,6 +307,7 @@ export const CheckoutProvider = ({
           data: checkoutState,
           discount_price: discountPrice,
           ship_price: shipPrice,
+          styles: checkoutStyles,
           subtotal,
           tax,
           shippingMethods,

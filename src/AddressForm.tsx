@@ -1,7 +1,7 @@
 import React from "react";
 
 import { useCheckout } from "./Checkout";
-import { US_STATES, inputStyles, selectStyles } from "./constants";
+import { US_STATES } from "./constants";
 
 /* eslint-disable camelcase */
 
@@ -11,7 +11,7 @@ type Props = {
 };
 
 const AddressForm = ({ includeName = false, stateKey }: Props) => {
-  const { data, updateCheckout } = useCheckout();
+  const { data, styles, updateCheckout } = useCheckout();
   const {
     first_name = "",
     last_name = "",
@@ -39,7 +39,7 @@ const AddressForm = ({ includeName = false, stateKey }: Props) => {
           <input
             name="first_name"
             placeholder="First Name"
-            className={inputStyles}
+            className={styles.input}
             value={first_name}
             onChange={onChange("first_name")}
             required
@@ -47,7 +47,7 @@ const AddressForm = ({ includeName = false, stateKey }: Props) => {
           <input
             name="last_name"
             placeholder="First Name"
-            className={inputStyles}
+            className={styles.input}
             value={last_name}
             onChange={onChange("first_name")}
             required
@@ -58,7 +58,7 @@ const AddressForm = ({ includeName = false, stateKey }: Props) => {
         <input
           name="address"
           placeholder="Address"
-          className={inputStyles}
+          className={styles.input}
           value={address}
           onChange={onChange("address")}
           required
@@ -66,7 +66,7 @@ const AddressForm = ({ includeName = false, stateKey }: Props) => {
         <input
           name="address2"
           placeholder="Apartment, Suite, etc (optional)"
-          className={inputStyles}
+          className={styles.input}
           value={address2}
           onChange={onChange("address2")}
           required
@@ -74,7 +74,7 @@ const AddressForm = ({ includeName = false, stateKey }: Props) => {
         <input
           name="city"
           placeholder="City"
-          className={inputStyles}
+          className={styles.input}
           value={city}
           onChange={onChange("city")}
           required
@@ -84,7 +84,7 @@ const AddressForm = ({ includeName = false, stateKey }: Props) => {
         <select
           name="country"
           placeholder="Country"
-          className={selectStyles}
+          className={styles.select}
           value={country}
           onChange={onChange("country")}
           required
@@ -95,7 +95,7 @@ const AddressForm = ({ includeName = false, stateKey }: Props) => {
         <select
           name="state"
           placeholder="State"
-          className={selectStyles}
+          className={styles.select}
           value={state}
           onChange={onChange("state")}
           required
@@ -108,7 +108,7 @@ const AddressForm = ({ includeName = false, stateKey }: Props) => {
         <input
           name="zip"
           placeholder="ZIP code"
-          className={inputStyles}
+          className={styles.input}
           value={zip}
           onChange={onChange("zip")}
           required

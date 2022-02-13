@@ -5,9 +5,11 @@ import {
 } from "@stripe/react-stripe-js";
 import React from "react";
 
-import { inputStyles } from "./constants";
+type Props = {
+  inputStyles?: string;
+};
 
-const StripePaymentForm = () => {
+const StripePaymentForm = ({ inputStyles = "" }: Props) => {
   return (
     <div>
       <CardNumberElement className={inputStyles} />

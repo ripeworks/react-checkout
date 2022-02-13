@@ -1,5 +1,11 @@
 {
-  "name": "react-checkout",
+  "name": "@ripeworks/checkout",
+  "scripts": {
+    "prepublish": "npm run clean && npm run build",
+    "clean": "rm -rf dist/* && mkdir -p dist",
+    "build": "tsc --project ./tsconfig.json --declaration",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "dependencies": {
     "@stripe/react-stripe-js": "^1.1.2",
     "@stripe/stripe-js": "^1.11.0",

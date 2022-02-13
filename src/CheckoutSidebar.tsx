@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 
 import { useCheckout } from "./Checkout";
-import { inputStyles } from "./constants";
 import { money } from "./money";
 
 /* eslint-disable camelcase */
@@ -17,6 +16,7 @@ const CheckoutSidebar = ({ ItemComponent }: Props) => {
     applyDiscount,
     discount_price,
     ship_price,
+    styles,
     subtotal,
     tax,
   } = useCheckout();
@@ -47,7 +47,7 @@ const CheckoutSidebar = ({ ItemComponent }: Props) => {
             <input
               type="text"
               placeholder="Discount code"
-              className={inputStyles}
+              className={styles.input}
               onChange={(e) => setDiscount(e.target.value)}
               value={discount}
             />

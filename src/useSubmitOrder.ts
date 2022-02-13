@@ -61,27 +61,38 @@ export const useSubmitOrder = (
       const { secret } = await intentResponse.json();
 
       if (cardElement) {
-        const { paymentIntent } = await stripe.confirmCardPayment(secret, {
-          payment_method: {
-            card: cardElement,
-            billing_details: {
-              name: `${address.first_name || data.first_name} ${
-                address.last_name || data.last_name
-              }`,
-              address: {
-                line1: address.address,
-                line2: address.address2,
-                city: address.city,
-                state: address.state,
-                postal_code: address.zip,
-                country: address.country,
+        const { paymentIntent, error } = await stripe.confirmCardPayment(
+          secret,
+          {
+            payment_method: {
+              card: cardElement,
+              billing_details: {
+                name: `${address.first_name || data.first_name} ${
+                  address.last_name || data.last_name
+                }`,
+                address: {
+                  line1: address.address,
+                  line2: address.address2,
+                  city: address.city,
+                  state: address.state,
+                  postal_code: address.zip,
+                  country: address.country,
+                },
               },
             },
-          },
-        });
+          }
+        );
+        if (error?.message) {
+          throw new Error(error.message);
+        }
         paymentToken = paymentIntent.id;
       } else {
-        const { paymentIntent } = await stripe.confirmCardPayment(secret);
+        const { paymentIntent, error } = await stripe.confirmCardPayment(
+          secret
+        );
+        if (error?.message) {
+          throw new Error(error.message);
+        }
         paymentToken = paymentIntent.id;
       }
 

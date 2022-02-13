@@ -1,7 +1,6 @@
 import React from "react";
 
 import { useCheckout } from "./Checkout";
-import { inputStyles, legendStyles } from "./constants";
 
 /* eslint-disable camelcase */
 
@@ -13,19 +12,20 @@ type Props = {
 const CustomerForm = ({ includeName = false, includePhone = false }: Props) => {
   const {
     data: { first_name = "", last_name = "", email = "", phone = "" },
+    styles,
     updateCheckout,
   } = useCheckout();
 
   return (
     <div>
       <fieldset>
-        <legend className={legendStyles}>Customer Information</legend>
+        <legend className={styles.legend}>Customer Information</legend>
         <div className="flex flex-col">
           <input
             name="email"
             placeholder="Email"
             type="email"
-            className={inputStyles}
+            className={styles.input}
             value={email}
             onChange={(e) => updateCheckout({ email: e.target.value })}
             required
@@ -35,7 +35,7 @@ const CustomerForm = ({ includeName = false, includePhone = false }: Props) => {
               <input
                 name="first_name"
                 placeholder="First Name"
-                className={inputStyles}
+                className={styles.input}
                 value={first_name}
                 onChange={(e) => updateCheckout({ first_name: e.target.value })}
                 required
@@ -43,7 +43,7 @@ const CustomerForm = ({ includeName = false, includePhone = false }: Props) => {
               <input
                 name="last_name"
                 placeholder="Last Name"
-                className={inputStyles}
+                className={styles.input}
                 value={last_name}
                 onChange={(e) => updateCheckout({ last_name: e.target.value })}
                 required
@@ -54,7 +54,7 @@ const CustomerForm = ({ includeName = false, includePhone = false }: Props) => {
             <input
               name="phone"
               placeholder="Phone Number"
-              className={inputStyles}
+              className={styles.input}
               value={phone}
               onChange={(e) => updateCheckout({ phone: e.target.value })}
               required
