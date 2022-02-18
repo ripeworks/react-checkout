@@ -3,6 +3,8 @@ export const inputStyles =
 
 export const legendStyles = "text-blue-900 text-2xl pt-8";
 
+export const summaryStyles = "text-blue-900 appearance-none mb-6";
+
 export const checkboxLabelStyles =
   "text-gray-800 text-xs flex items-center cursor-pointer";
 export const radioLabelStyles =

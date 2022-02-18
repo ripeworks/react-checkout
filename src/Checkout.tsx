@@ -16,11 +16,18 @@ import {
   legendStyles,
   radioLabelStyles,
   selectStyles,
+  summaryStyles,
 } from "./constants";
 
 /* eslint-disable camelcase */
 
-export type StyleNames = "legend" | "input" | "select" | "radio" | "checkbox";
+export type StyleNames =
+  | "legend"
+  | "summary"
+  | "input"
+  | "select"
+  | "radio"
+  | "checkbox";
 
 export type Item = {
   id: string;
@@ -132,6 +139,7 @@ const initialContext: CheckoutContextType = {
     legend: legendStyles,
     radio: radioLabelStyles,
     select: selectStyles,
+    summary: summaryStyles,
   },
   subtotal: 0,
   tax: 0,
@@ -178,6 +186,7 @@ export const CheckoutProvider = ({
       legend: styles?.legend ?? legendStyles,
       radio: styles?.radio ?? radioLabelStyles,
       select: styles?.select ?? selectStyles,
+      summary: styles?.summary ?? summaryStyles,
     }),
     [styles]
   );
