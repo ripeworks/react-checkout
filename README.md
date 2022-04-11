@@ -23,3 +23,8 @@ function App() {
   );
 }
 ```
+
+### Stripe
+
+- Provide a publishable key using `NEXT_PUBLIC_STRIPE_KEY` environment variable.
+- Create an `intent.ts` api route, a sample one is included in this repo. You can also roll your own, it should provide a payment intent client secret response.
