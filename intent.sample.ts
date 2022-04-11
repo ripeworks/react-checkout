@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_KEY);
+const stripe = new Stripe(process.env.STRIPE_KEY, { apiVersion: "2020-08-27" });
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
@@ -9,6 +9,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
   }
 
   const intentParams = {
+    // !! heads up, you should probably validate this amount on the server
     amount: req.body.total.replace(".", ""),
     currency: "usd",
     customer: req.body.customer ?? undefined,
