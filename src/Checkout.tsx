@@ -7,6 +7,7 @@ import React, {
   useEffect,
   useCallback,
   useMemo,
+  useRef,
   useState,
 } from "react";
 
@@ -67,6 +68,8 @@ type CheckoutStateType = {
   last_name?: string;
   phone?: string;
   items: Item[];
+  payment_method?: string;
+  prefer_save_payment?: boolean;
   ship_address?: Address;
   ship_method: string;
   step: number;
@@ -82,7 +85,7 @@ type CheckoutContextType = {
   tax: number;
   shippingMethods: ShippingMethod[];
   styles: Record<StyleNames, string>;
-  applyDiscount: (discount: string) => Error | void;
+  applyDiscount?: (code: string) => Promise<Error | void>;
   clearCart: () => void;
   updateCheckout: (nextState: Partial<CheckoutStateType>) => void;
   updateCart: (item: Item) => void;
@@ -112,6 +115,8 @@ const initialState: CheckoutStateType = {
   email: "",
   discount_code: undefined,
   items: [],
+  payment_method: "",
+  prefer_save_payment: true,
   ship_address: {
     first_name: "",
     last_name: "",
@@ -143,7 +148,6 @@ const initialContext: CheckoutContextType = {
   },
   subtotal: 0,
   tax: 0,
-  applyDiscount: () => {},
   clearCart: () => {},
   updateCheckout: () => {},
   updateCart: () => {},
@@ -155,7 +159,7 @@ let stripePromise: Promise<Stripe | null>;
 
 type Props = {
   children: React.ReactNode;
-  discounts?: Discount[];
+  getDiscount?: (code: string) => Promise<Discount | undefined>;
   shippingMethods: ShippingMethod[];
   storageKey?: string;
   styles?: Partial<Record<StyleNames, string>>;
@@ -164,7 +168,7 @@ type Props = {
 
 export const CheckoutProvider = ({
   children,
-  discounts = [],
+  getDiscount,
   shippingMethods = [],
   storageKey = "checkoutState",
   styles,
@@ -178,6 +182,7 @@ export const CheckoutProvider = ({
 
   const [checkoutState, setCheckoutState] = useState(initialState);
   const [orderComplete, setOrderComplete] = useState(false);
+  const orderDiscount = useRef<Discount>();
 
   const checkoutStyles = useMemo(
     () => ({
@@ -243,16 +248,21 @@ export const CheckoutProvider = ({
     });
   }, []);
 
-  const applyDiscount = useCallback((discountCode) => {
-    const discount = discounts.find((d) => d.id === discountCode);
+  const applyDiscount = useCallback(async (discountCode: string) => {
+    if (!getDiscount) return;
+
+    const discount = await getDiscount(discountCode);
     if (!discount) {
       throw new Error(`Invalid code '${discountCode}'`);
     }
 
-    setCheckoutState((prevState) => ({
-      ...prevState,
-      discount_code: discountCode,
-    }));
+    if (discount) {
+      orderDiscount.current = discount;
+      setCheckoutState((prevState) => ({
+        ...prevState,
+        discount_code: discount.id,
+      }));
+    }
   }, []);
 
   const updateCheckout = useCallback(
@@ -274,18 +284,26 @@ export const CheckoutProvider = ({
   const [shipPrice, setShipPrice] = useState(0);
 
   useEffect(() => {
-    const discount = discounts.find(
-      (d) => d.id === checkoutState.discount_code
-    );
+    async function calculateDiscount() {
+      if (!checkoutState.discount_code) {
+        setDiscountPrice(0);
+        return;
+      }
 
-    if (typeof discount?.amount === "function") {
-      discount
-        .amount(subtotal)
-        .then((amount) => setDiscountPrice(amount))
-        .catch(() => setDiscountPrice(0));
-    } else {
-      setDiscountPrice(0);
+      const discount = orderDiscount.current
+        ? orderDiscount.current
+        : await getDiscount?.(checkoutState.discount_code);
+
+      if (typeof discount?.amount === "function") {
+        discount
+          .amount(subtotal)
+          .then((amount) => setDiscountPrice(amount))
+          .catch(() => setDiscountPrice(0));
+      } else {
+        setDiscountPrice(0);
+      }
     }
+    calculateDiscount();
   }, [checkoutState.discount_code, subtotal]);
 
   useEffect(() => {
@@ -309,7 +327,7 @@ export const CheckoutProvider = ({
     }
 
     const taxableAmount = subtotal + shipPrice + discountPrice;
-    return Number((taxableAmount * (checkoutState.tax_rate / 100)).toFixed(2));
+    return Number((taxableAmount * checkoutState.tax_rate).toFixed(2));
   }, [checkoutState.tax_rate, subtotal, shipPrice, discountPrice]);
 
   return (

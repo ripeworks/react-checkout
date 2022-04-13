@@ -6,18 +6,21 @@ import { money } from "./money";
 /* eslint-disable camelcase */
 
 type Props = {
+  discounts?: boolean;
   ItemComponent: React.ElementType<any>;
   lineItemStyles?: string;
   lineItemCostStyles?: string;
 };
 
 const CheckoutSidebar = ({
+  discounts,
   ItemComponent,
   lineItemStyles = "text-sm text-neutral-600 mt-3",
-  lineItemCostStyles = "",
+  lineItemCostStyles = "ml-auto",
 }: Props) => {
   const {
     data: { discount_code, items, ship_method },
+    updateCheckout,
     complete,
     applyDiscount,
     discount_price,
@@ -28,6 +31,7 @@ const CheckoutSidebar = ({
   } = useCheckout();
 
   const [discount, setDiscount] = useState("");
+  const [error, setError] = useState("");
 
   if (items.length < 1) {
     return (
@@ -45,23 +49,27 @@ const CheckoutSidebar = ({
           <ItemComponent key={item.id} item={item} />
         ))}
       </div>
-      {!discount_code && !complete && (
-        <>
+      {discounts && !discount_code && !complete && (
+        <div>
           <div className="flex items-center justify-center">
             <input
               type="text"
               placeholder="Discount code"
               className={styles.input}
-              onChange={(e) => setDiscount(e.target.value)}
+              onChange={(e) => {
+                setError("");
+                setDiscount(e.target.value);
+              }}
               value={discount}
             />
             <button
               className="ml-4"
               type="button"
-              onClick={() => {
+              onClick={async () => {
                 try {
-                  applyDiscount(discount);
+                  await applyDiscount?.(discount);
                 } catch (err) {
+                  setError((err as Error).message);
                   setDiscount("");
                 }
               }}
@@ -69,7 +77,8 @@ const CheckoutSidebar = ({
               Apply
             </button>
           </div>
-        </>
+          {!!error && <div className="text-red-500 text-sm mt-2">{error}</div>}
+        </div>
       )}
       <div className={`flex items-center justify-between ${lineItemStyles}`}>
         <span>Subtotal:</span>
@@ -92,6 +101,18 @@ const CheckoutSidebar = ({
           <span>
             Discount <em>({discount_code})</em>:
           </span>
+          {discounts && !complete && (
+            <button
+              className="ml-2 text-gray-800"
+              type="button"
+              onClick={() => {
+                setDiscount("");
+                updateCheckout({ discount_code: "" });
+              }}
+            >
+              Remove
+            </button>
+          )}
           <span className={lineItemCostStyles}>{money(discount_price)}</span>
         </div>
       )}

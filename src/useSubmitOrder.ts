@@ -16,7 +16,8 @@ const requiredFields = [
 ] as const;
 
 export const useSubmitOrder = (
-  orderHandler: (order: OrderRequestPayload) => Promise<void>
+  orderHandler: (order: OrderRequestPayload) => Promise<void>,
+  options?: { customer?: string }
 ) => {
   const { data, discount_price, ship_price, subtotal, tax } = useCheckout();
   const total = useTotal();
@@ -46,6 +47,7 @@ export const useSubmitOrder = (
 
       const orderPayload = {
         ...data,
+        customer: options?.customer,
         discount_price: discount_price.toFixed(2),
         ship_price: ship_price.toFixed(2),
         subtotal: subtotal.toFixed(2),
@@ -84,6 +86,7 @@ export const useSubmitOrder = (
                   postal_code: address.zip,
                   country: address.country,
                 },
+                phone: data.phone ?? "",
               },
             },
           }
