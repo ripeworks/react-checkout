@@ -12,4 +12,5 @@ export { default as CustomerForm } from "./CustomerForm";
 export { default as CustomerInfo } from "./CustomerInfo";
 export { default as OrderSummary } from "./OrderSummary";
 export { default as PaymentForm } from "./PaymentForm";
+export { default as SavedPaymentForm } from "./SavedPaymentForm";
 export { default as ShippingForm } from "./ShippingForm";
