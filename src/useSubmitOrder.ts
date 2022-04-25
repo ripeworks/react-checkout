@@ -47,6 +47,10 @@ export const useSubmitOrder = (
 
       const orderPayload = {
         ...data,
+        bill_address:
+          data.bill_address_method === "same"
+            ? data.ship_address
+            : data.bill_address,
         customer: options?.customer,
         discount_price: discount_price.toFixed(2),
         ship_price: ship_price.toFixed(2),
