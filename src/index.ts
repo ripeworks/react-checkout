@@ -1,6 +1,7 @@
 export { money } from "./money";
 export { useTotal } from "./useTotal";
 export { useSubmitOrder } from "./useSubmitOrder";
+export { useCheckoutField } from "./useCheckoutField";
 export { CheckoutProvider, useCheckout } from "./Checkout";
 export { steps } from "./constants";
 
